@@ -1,0 +1,252 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: 'https://virtserver.swaggerhub.com/columbia-07d/Microservice3_Ranking/1.0.0'
+info:
+  description: 'This ranking API allows users to rank their favorite matcha powders and cafes. '
+  version: 1.0.0
+  title: Matchamania – Rankings API
+  contact:
+    email: you@your-company.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: ranking
+    description: 'Create, read, update, delete matcha rankings'
+paths:
+  /ranking:
+    get:
+      tags:
+        - ranking
+      summary: lists matcha ranking of user
+      operationId: listRank
+      description: 'By passing in the appropriate parameters (rating range, cafe/home, cost), you can search for associated ranking'
+      parameters:
+        - in: query
+          name: user_id
+          description: user to get rankings for
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - in: query
+          name: min_rating
+          description: optional minimum ratings
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 5
+        - in: query
+          name: max_rating
+          description: optional maximum ratings
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 5
+        - in: query
+          name: max_cost
+          description: maximum cost of drink
+          schema:
+            type: number
+            format: float
+            minimum: 0
+        - in: query
+          name: origin
+          description: where the drink was made
+          schema:
+            type: string
+            enum:
+              - home
+              - cafe
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/readRank'
+              example:
+                - id: 1d2c3b4a-1111-4222-8333-444455556666
+                  user_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                  items:
+                    - name: Ikuyo Ippodo Tea
+                      origin: home
+                      rating: 3.9
+                      cost_per_gram: 0.8
+        '400':
+          description: bad input parameter
+    post:
+      tags:
+        - ranking
+      summary: adds a ranking
+      operationId: addRank
+      description: Adds an item to the system
+      responses:
+        '201':
+          description: item created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/readRank'
+              example:
+                id: 1d2c3b4a-1111-4222-8333-444455556666
+                user_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                items:
+                  - name: Ikuyo Ippodo Tea
+                    origin: home
+                    rating: 4.7
+                    cost_per_gram: 0.8
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: an existing item already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/addRank'
+        description: matcha ranking to add
+  '/ranking/{id}':
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema:
+          type: string
+          format: uuid
+    get:
+      tags:
+        - ranking
+      summary: Get one ranking of a user
+      operationId: getRank
+      responses:
+        '200':
+          description: Gets one ranking of a user
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/readRank'
+        '404':
+          description: Not found
+    put:
+      tags:
+        - ranking
+      summary: Replace a rating (API-first placeholder)
+      operationId: replaceRank
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/updateRank'
+      responses:
+        '200':
+          description: Updated ranking
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/readRank'
+              example:
+                - id: 1d2c3b4a-1111-4222-8333-444455556666
+                  user_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+                  items:
+                    - name: Ikuyo Ippodo Tea
+                      origin: home
+                      rating: 4.9
+                      cost_per_gram: 0.8
+        '404':
+          description: Not found
+    delete:
+      tags:
+        - ranking
+      summary: Delete a ranking (API-first placeholder)
+      operationId: deleteRank
+      responses:
+        '204':
+          description: Deleted ranking
+        '404':
+          description: Not found
+components:
+  schemas:
+    addRank:
+      type: object
+      required:
+        - user_id
+      properties:
+        user_id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+    readRank:
+      allOf:
+        - $ref: '#/components/schemas/addRank'
+        - type: object
+          example:
+            id: 1d2c3b4a-1111-4222-8333-444455556666
+            user_id: aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa
+            items:
+              - name: Ikuyo Ippodo Tea
+                origin: home
+                rating: 3.9
+                cost_per_gram: 0.8
+          required:
+            - id
+            - items
+          properties:
+            id:
+              type: string
+              format: uuid
+              example: 1d2c3b4a-1111-4222-8333-444455556666
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/RankedItem'
+      title: ''
+    updateRank:
+      type: object
+      required:
+        - name
+        - rating
+      properties:
+        name:
+          type: string
+          description: Item name to update
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          description: New rating (0–5)
+    RankedItem:
+      type: object
+      required:
+        - name
+        - origin
+        - rating
+        - cost_per_gram
+      properties:
+        name:
+          type: string
+          example: Ikuyo Ippodo Tea
+        origin:
+          type: string
+          enum:
+            - cafe
+            - home
+          example: home
+        rating:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 5
+          example: 3.9
+        cost_per_gram:
+          type: number
+          format: float
+          example: 0.8

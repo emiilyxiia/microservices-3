@@ -23,7 +23,6 @@ app = FastAPI(
     }
 )
 
-# need to edit to work for dictionary
 def check_items_exist_for_user(new_ranking: RankingBase):
     # filter rankings of the same user
     user_rankings = [r for r in db if r.user_id == new_ranking.user_id]
@@ -43,7 +42,7 @@ def to_public(r: RankingBase) -> RankingRead:
         user_id=r.user_id,
         items=r.items
     )
-# need to fix for dictionary
+
 @app.get("/ranking", response_model=List[RankingRead], tags=["ranking"])
 def list_rankings(
     user_id: UUID = Query(..., description="User to get rankings for"),

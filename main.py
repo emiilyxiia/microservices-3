@@ -1,28 +1,15 @@
 from datetime import datetime
 
 from fastapi import FastAPI, HTTPException, Query, Path
-from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
-from typing import List, Optional, Literal, Dict
+
+from typing import List, Optional, Dict
 from uuid import UUID, uuid4
-import uvicorn
-from fastapi.openapi.utils import get_openapi
+
 from models.ranking import RankingRead, RankingUpdate, RankingCreate, Origin, RankingBase, RankedItem, RankedItemUpdate
-# from database import Base, engine, get_db
+
 
 db: Dict[UUID, RankingRead] = {}
-# db[UUID("1d2c3b4a-1111-4222-8333-444455556666")] = RankingRead(
-#     id=UUID("1d2c3b4a-1111-4222-8333-444455556666"),
-#     user_id=UUID("aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"),
-#     items=[
-#         RankedItem(
-#             name="Ikuyo Ippodo Tea",
-#             origin=Origin.home,
-#             rating=4.7,
-#             cost_per_gram=0.8,
-#         )
-#     ],
-# )
+
 app = FastAPI(
     title="Matchamania – Rankings API",
     description="This ranking API allows users to rank their favorite matcha powders and cafes.",
@@ -129,13 +116,13 @@ def replace_ranking(
 
     # Replace entire item list
     ranking.items = payload.items
-    # ranking.updated_at = datetime.utcnow()
+    ranking.updated_at = datetime.utcnow()
 
     return to_public(ranking)
 
 
 # -----------------------------
-# PATCH /ranking/{id}/item/{item_id}
+# PATCH /ranking/{id}/item/{item_index}
 # Internal helper endpoint (not in YAML)
 # Allows updating a single RankedItem field.
 # -----------------------------

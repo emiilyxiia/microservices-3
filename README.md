@@ -1,0 +1,1 @@
+deployed url: https://matchamania-rankings-api-945802238964.us-central1.run.app/

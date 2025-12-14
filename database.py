@@ -61,7 +61,7 @@ def get_database_url():
     else:
         # Local development or direct TCP connection
         db_host = os.getenv("DB_HOST", "127.0.0.1")
-        db_port = os.getenv("DB_PORT", "3307")
+        db_port = os.getenv("DB_PORT", "3306")
         db_user = os.getenv("DB_USER", "appuser")
         db_password = os.getenv("DB_PASSWORD")
         db_name = os.getenv("DB_NAME", "matchamania")

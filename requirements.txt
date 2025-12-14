@@ -1,7 +1,9 @@
 annotated-types==0.7.0
 anyio==4.10.0
+cffi==2.0.0
 click==8.2.1
 colorama==0.4.6
+cryptography==46.0.3
 dnspython==2.7.0
 dotenv==0.9.9
 email-validator==2.3.0
@@ -9,6 +11,7 @@ fastapi==0.116.1
 greenlet==3.2.4
 h11==0.16.0
 idna==3.10
+pycparser==2.23
 pydantic==2.11.7
 pydantic_core==2.33.2
 PyMySQL==1.1.2

@@ -1,5 +1,6 @@
 from datetime import datetime
 from fastapi import FastAPI, HTTPException, Query, Path, Depends
+from fastapi.middleware.cors import CORSMiddleware
 
 from typing import List, Optional
 from uuid import UUID, uuid4
@@ -20,6 +21,14 @@ app = FastAPI(
     }
 )
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[ "https://sprint2microservicewebapp.ue.r.appspot.com/",
+                    "http://localhost:8080"],
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows GET, POST, PUT, DELETE, PATCH, etc.
+    allow_headers=["*"],
+)
 
 # Initialize database on startup
 @app.on_event("startup")

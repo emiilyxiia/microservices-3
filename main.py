@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from fastapi import FastAPI, HTTPException, Query, Path, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,6 +10,12 @@ from sqlalchemy.orm import Session
 
 from models.ranking import RankingRead, RankingUpdate, RankingCreate, Origin, RankedItem, RankedItemUpdate
 from database import get_db, init_db, RankingDB, RankedItemDB
+from google.cloud import pubsub_v1
+import os
+
+publisher = pubsub_v1.PublisherClient()
+PROJECT_ID = os.getenv("GOOGLE_CLOUD_PROJECT", "matchamania-api-prod")
+TOPIC_NAME = "ranking-events"
 
 app = FastAPI(
     title="Matchamania – Rankings API",
@@ -149,6 +156,20 @@ def create_ranking(
     db.add(db_ranking)
     db.commit()
     db.refresh(db_ranking)
+
+    try:
+        topic_path = publisher.topic_path(PROJECT_ID, TOPIC_NAME)
+        event_data = {
+            "event_type": "ranking_created",
+            "ranking_id": str(db_ranking.id),
+            "user_id": str(db_ranking.user_id),
+            "timestamp": datetime.utcnow().isoformat()
+        }
+        message_bytes = json.dumps(event_data).encode("utf-8")
+        future = publisher.publish(topic_path, message_bytes)
+        print(f"Published message ID: {future.result()}")
+    except Exception as e:
+        print(f"Error publishing event: {e}")
 
     return db_to_pydantic(db_ranking)
 

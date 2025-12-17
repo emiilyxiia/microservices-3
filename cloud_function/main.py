@@ -47,10 +47,10 @@ def process_ranking_event(event, context):
         event_type = event_data.get('event_type')
 
         if event_type == "ranking_created":
-            # Do something with the ranking
+
             session = SessionLocal()
             try:
-                # Example: Log the ranking details
+
                 ranking = session.execute(
                     sqlalchemy.text("""
                         SELECT id, user_id, created_at 
@@ -63,10 +63,6 @@ def process_ranking_event(event, context):
                 if ranking:
                     print(f"✅ Processed ranking: {ranking[0]} for user: {ranking[1]}")
 
-                    # You could do additional processing here:
-                    # - Send notification
-                    # - Update analytics
-                    # - Trigger another workflow
                 else:
                     print(f"⚠️ Ranking {ranking_id} not found")
 

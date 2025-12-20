@@ -30,8 +30,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[ "https://sprint2microservicewebapp.ue.r.appspot.com/",
-                    "http://localhost:8080"],
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],  # Allows GET, POST, PUT, DELETE, PATCH, etc.
     allow_headers=["*"],
